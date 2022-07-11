@@ -4464,10 +4464,11 @@ def RealiCFG(flpath,file1):
                                 line1 = line.split('//')
                                 line = line1[0]
                             nex = 1
-                            try:
-                                nexline = lines[index4+i+nex]
-                            except:
-                                break
+                            nexline = lines[index4 + i + nex]
+                            # try:
+                            #     nexline = lines[index4+i+nex]
+                            # except:
+                            #     break
                             
                             while ';' not in nexline:
                                 # breakpoint()
@@ -4480,8 +4481,11 @@ def RealiCFG(flpath,file1):
                                 line = line + nexline.replace('\n','')
                             
                                 nex = nex + 1
-                                try: nexline = lines[index4 + i + nex]
-                                except: break
+                                nexline = lines[index4 + i + nex]
+                                # try:
+                                #     nexline = lines[index4 + i + nex]
+                                # except:
+                                #     break
                                 
                                 if '//' in line:
                                     nexline = nexline.split('//')[0]
@@ -4495,7 +4499,7 @@ def RealiCFG(flpath,file1):
                         
                         
 
-                        i = i+nex
+                        # i = i+nex
                         
                         line = (line.replace('\n','').replace('\t',''))
                         
