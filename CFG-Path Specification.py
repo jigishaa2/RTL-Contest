@@ -496,7 +496,7 @@ def clockedge(lines, index4, node, Nodeinfo, case):
         for i in line6:
             always.append(i.replace(' ','') + ' != 0!')
         node = node + 1
-        always1.append('n' + str(node) + ',0 ' +' always ' + ' or '.join(always) + ' ' + str(connection))
+        always1.append('n' + str(node) + ',0 ' +' always ' + ' or '.join(always) + ' ' + str(connection)+'; ')
         for a in always1:
             Nodeinfo1.append(a)
         
@@ -512,13 +512,13 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                     always.append(line6[1] + ' == 0')
             node = node + 1
             
-            always1.append('n' + str(node) + ',0 ' + 'always ' + ' or '.join(always) + ' ' + str(connection))
+            always1.append('n' + str(node) + ',0 ' + 'always ' + ' or '.join(always) + ' ' + str(connection)+'; ')
             for a in always1:
                 Nodeinfo1.append(a)
         
         elif ' or ' in line4:
             
-            line5 = line4.split('or')  
+            line5 = line4.split('or')
             for i in range(len(line5)):
                 if 'posedge' in line5[i]:
                     line6 = line5[i].split()
@@ -530,16 +530,16 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                     always.append(line5[i])
                 else:
                     line6 = line5[i].split()
-                    
-                    always.append(line6[0] + ' != 0!')
+                    if line6:
+                        always.append(line6[0] + ' != 0!')
             
             node = node + 1
-            always1.append('n' + str(node) + ',0 ' + 'always ' + ' or '.join(always) + ' ' + str(connection))
+            always1.append('n' + str(node) + ',0 ' + 'always ' + ' or '.join(always) + ' ' + str(connection)+'; ')
             for a in always1:
                 Nodeinfo1.append(a)
         elif '*' in line4:            
             node = node + 1            
-            always.append('n' + str(node) + ',0 ' + 'always ' + 'True' + ' ' + str(connection))
+            always.append('n' + str(node) + ',0 ' + 'always ' + 'True' + ' ' + str(connection)+'; ')
             for a in always:
                 Nodeinfo1.append(a)        
         elif 'posedge' in line4 or 'negedge' in line4:
@@ -548,12 +548,12 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                 line6 = line5.replace('posedge','')
                 node = node + 1
                 
-                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 1' + ' ' + str(connection))
+                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 1' + ' ' + str(connection)+'; ')
             elif 'negedge' in line5:
                 line6 = line5.replace('negedge','')
                 node = node + 1
                 
-                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 0' + ' ' + str(connection))
+                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 0' + ' ' + str(connection)+'; ')
             for a in always:
                 Nodeinfo1.append(a)
         
@@ -564,7 +564,7 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                 line6 = line[start:end]
                 node = node + 1
                 
-                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' != 0!' + ' ' + str(connection))
+                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' != 0!' + ' ' + str(connection)+'; ')
             elif '(' in line and '@' in line and ')' not in line and ':' not in line and ';' not in line and 'begin' not in line:
                 x=1
                 while ')' not in line:
@@ -574,7 +574,7 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                     line6 = line + lines[index4+x]
                 node = node + 1
                 
-                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 1' + ' ' + str(connection))
+                always.append('n' + str(node) + ',0 ' + 'always ' + line6 + ' == 1' + ' ' + str(connection)+'; ')
             for a in always:
                 Nodeinfo1.append(a)
 
@@ -862,7 +862,7 @@ def clockedge(lines, index4, node, Nodeinfo, case):
                 values, valueline = onelinecondition(values)
                 line = ' '.join(values)
                 connection = connection + 1
-                Nodeinfo.append('n' + str(node)+',0'+ ' ' + valueline + ' ' + str(connection))
+                Nodeinfo.append('n' + str(node)+',0'+ ' ' + valueline + ' ' + str(connection)+'; ')
               
         i = i+1
         line = lines[index4+i]
@@ -943,17 +943,17 @@ def assignmentif(line, node, Nodeinfo, nested, nodenested):
                 statement1 = 'n'+ str(node) + ',' + str(index) + ' ' + ifstatement[index] + ' ' + str(connection)                
                 Connection.append(statement1)
             else:
-                statement1 = 'n'+ nodenested + ' ' + ifstatement[index] + ' ' + str(connection)                
+                statement1 = 'n'+ nodenested + ' ' + ifstatement[index] + ' ' + str(connection)+'; '
                 Connection.append(statement1)
             if index == 0:
                 if nested == 0:
                     
                     connection = connection + 1
-                    statement2 = 'n'+ str(node) + ',0' + ' ' + assignvalue + ' = ' + passstatement[index] + ' ' + str(connection)
+                    statement2 = 'n'+ str(node) + ',0' + ' ' + assignvalue + ' = ' + passstatement[index] + ' ' + str(connection)+'; '
                     Connection.append(statement2)
                     continue
                 else:
-                    statement2 = 'n'+ nodenested + ' ' + assignvalue + ' = ' + passstatement[len(passstatement)-1] + ' ' + str(connection)
+                    statement2 = 'n'+ nodenested + ' ' + assignvalue + ' = ' + passstatement[len(passstatement)-1] + ' ' + str(connection)+'; '
                     Connection.append(statement2)
                     connection = connection + 1
                     continue
@@ -988,13 +988,13 @@ def assignmentif(line, node, Nodeinfo, nested, nodenested):
     if nested == 0:
         connection = 0
         
-        firststatement = 'n' + str(node) + ',0' + ' if ' + ifstatement + ' ' + str(connection)
+        firststatement = 'n' + str(node) + ',0' + ' if ' + ifstatement + ' ' + str(connection)+'; '
         connection = connection + 1
         Connection.append(firststatement)
-        secondstatement = 'n' + str(node)+ ',0'  + ' ' + assignvalue + ' = ' + passstatement + ' ' + str(connection)
+        secondstatement = 'n' + str(node)+ ',0'  + ' ' + assignvalue + ' = ' + passstatement + ' ' + str(connection)+'; '
         connection = connection + 1
         Connection.append(secondstatement)
-        thirstatement = 'n' + str(node)+ ',0'  + ' ' + assignvalue + ' = ' + elsestatement + ' ' + str(connection)
+        thirstatement = 'n' + str(node)+ ',0'  + ' ' + assignvalue + ' = ' + elsestatement + ' ' + str(connection)+'; '
         Connection.append(thirstatement)
         Nodeinfo.append(Connection)
         return node ,Nodeinfo
@@ -1012,7 +1012,6 @@ def assignmentif(line, node, Nodeinfo, nested, nodenested):
         return nodenested ,Nodeinfo
 
 def nestedifelsecondition(lines, index4, node, Nodeinfo1, connection):
-    
     i=0
     nestedif = []
     ifline = ''
@@ -2907,7 +2906,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 node = node + 1
                 Connection = 0
                 
-                Condition.append('n' + str(node)+ ',0' + ' ' + line10 + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0' + ' ' + line10 + ' '+ str(Connection)+'; ')
                 
          
                 nextline = lines[index4 + 1]
@@ -2928,7 +2927,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 node = node + 1
                 Connection = 0
                 
-                Condition.append('n' + str(node)+ ',0' + ' ' + line8 + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0' + ' ' + line8 + ' '+ str(Connection)+'; ')
                 
                 nextline = lines[index4 + 1]
                 if '//' in nextline:
@@ -2988,10 +2987,10 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 line1 = line[start:].replace(';','').replace('`','').replace('&&',' and ').replace('||',' or ').replace('&',' and ').replace('|', ' or').replace('==', ' <= ')
 
                 
-                Condition.append('n' + str(node)+ ',0' + ' ' + line1 + str(Connection))
+                Condition.append('n' + str(node)+ ',0' + ' ' + line1 + str(Connection)+'; ')
             if oneline == 1:
                 
-                Condition.append('n' + str(node)+ ',0' + ' ' + valueline + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0' + ' ' + valueline + ' ' + str(Connection)+'; ')
             
     elif '&&' in values or '||' in values or '&' in values:
         
@@ -3042,7 +3041,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
         node = node + 1
         Connection = 0
         
-        Condition.append('n' + str(node)+ ',0' + ' ' + line10 + ' '+ str(Connection))
+        Condition.append('n' + str(node)+ ',0' + ' ' + line10 + ' '+ str(Connection)+'; ')
         
         nextline = lines[index4 + 1]
         if '//' in nextline:
@@ -3062,7 +3061,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
         node = node + 1
         Connection = 0
         
-        Condition.append('n' + str(node)+ ',0' + ' ' + line8 + ' '+ str(Connection))
+        Condition.append('n' + str(node)+ ',0' + ' ' + line8 + ' '+ str(Connection)+'; ')
         nextline = lines[index4 + 1]
         if '//' in nextline:
             nextline = nextline.split('//')[0]
@@ -3071,7 +3070,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
 
     if oneline == 1:
         
-        Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection))
+        Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection)+'; ')
         
     i = 1
     stop = 0
@@ -3117,7 +3116,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 nextlinecheck = lines[index4 + x]
                 if '//' in nextline:
                     nextline = nextline.split('//')[0]
-            
+
             Nodeinfo1 = []
             Nodeinfo1, index3, node = nestedcasestatement(lines, index4 + i, str(node), Nodeinfo1, 0)
             for nodeflow in Nodeinfo1:
@@ -3399,7 +3398,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 
                 node = node + 1
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + line10 + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + line10 + ' '+ str(Connection)+'; ')
                 
                 i = i + 1
                 nextline = lines[index4 + i]
@@ -3418,7 +3417,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 Connection = 0
                 node = node + 1
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + line8 + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + line8 + ' '+ str(Connection)+'; ')
                 
                 i = i + 1
                 nextline = lines[index4 + i]
@@ -3428,7 +3427,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 
             if oneline == 1:
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection)+'; ')
                 node = node + 1
             
             if ('if ' in nextline or 'if(' in nextline) and 'else' not in nextline or (('if(' in nextline and ')' in nextline)) :
@@ -3533,7 +3532,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
             if oneline == 1:
                 
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + valueline + ' '+ str(Connection)+'; ')
                 
             i = i + 1
             nextline = lines[index4 + i]
@@ -3555,7 +3554,7 @@ def ifelsecondition(lines, index4, node, Nodeinfo, case):
                 nextline9 = nextline9.replace('=',' = ')
             Connection = Connection + 1
             
-            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline9 + ' ' + str(Connection))
+            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline9 + ' ' + str(Connection)+'; ')
             i = i + 1
             nextline = lines[index4 + i]
             if '//' in nextline:
@@ -3803,10 +3802,10 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
                 nextline3 = nextline3.replace("'",'')
             if '<=' in nextline3:
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
             elif '=' in nextline3:
                 
-                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
                
                 Nodeinfo.append(Condition)
                 
@@ -3861,7 +3860,7 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
             elif nextline.count(':') == 1:
                 assignment1 = nextline.split(':')[0].replace(' ','')
                 Connection = 0
-                Nodeinfo.append('n' + str(node)+ ',0'  +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection))
+                Nodeinfo.append('n' + str(node)+ ',0'  +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection)+'; ')
                 node = node + 1
             else:
                 assignment = nextline.split(':')
@@ -3869,12 +3868,12 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
             assignment = nextline.split()
             nextline3 = ' '.join(assignment)
             if '<=' in nextline3:
-                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
             elif '=' in nextline3:
                 nextline3 = nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')
                 if ' <=  <= ' in nextline3:
                     nextline3 = nextline3.replace(' <=  <= ', ' == ')
-                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3 + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3 + ' ' + str(Connection)+'; ')
                                 
             node = node + 1
         elif checkb == 1:
@@ -3894,7 +3893,7 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
             if val ==':' and ('`' in nextline or "'h" in equal or "'b" in equal):
                 equal = equal.replace(':','')
                 nextline3 =  variable + ' == ' + equal
-                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
                 
                 Connection = Connection + 1
                 node = node + 1
@@ -3932,29 +3931,29 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
                         nextline3 = nextline3.replace("'",'')
                         
                         if '<=' in nextline3:
-                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
                         elif '=' in nextline3:
-                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
                         node = node + 1
                         break
                     elif '{' in nextline3 and '}' not in nextline3:
                         if '<=' in nextline3:
-                            Condition2 = 'n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','')
+                            Condition2 = 'n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','')+'; '
                         elif '=' in nextline3:
-                            Condition2 = 'n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')
+                            Condition2 = 'n' + str(node)+ ',0'  + ' ' + nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')+'; '
                         checkb = 1
                         node = node + 1
                         break
                     else:
                         if '<=' in nextline3:
                             
-                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
+                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection)+'; ')
                         elif '=' in nextline3:
                             
-                            nextline3 = nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')
+                            nextline3 = nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')+'; '
                             if ' <=  <= ' in nextline3:
                                 nextline3 = nextline3.replace(' <=  <= ', ' == ')
-                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3 + ' ' + str(Connection))
+                            Condition.append('n' + str(node)+ ',0'  + ' ' + nextline3 + ' ' + str(Connection)+'; ')
                             
                         node = node + 1
                         break
@@ -3973,7 +3972,6 @@ def casestatement(lines, index4, node, Nodeinfo, ifcond):
     return Nodeinfo, index4+i, node
 
 def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
-    
     case = 0
     line = lines[index4]
     if '//' in line:
@@ -4004,14 +4002,13 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
     default = 0
     read = 0
     checkb = 0
-    breakpoint
+    # breakpoint
     while 'endcase' not in nextline:
-                
         nextline = nextline.replace('\n','').replace('`','')
         if '//' in nextline:
             nextline2 = nextline.split('//')
             nextline = nextline2[0].replace('\n','')
-        
+
         if nextline.replace(' ','').replace('\t','').replace('\n','') == 'end':
             i = i + 1
             nextline = lines[index4 + i]
@@ -4037,20 +4034,18 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
             i = i + 1
             nextline = lines[index4 + i]
             continue
-        
+
         indent1 = 0
         variable1 = []
-        
         nextlinevalue = list(nextline)
-        
         if 'default' in nextline:
             default = 1
             nextlinecheck = lines[index4 + i].replace('default','')
+
             if nextlinecheck[1]==';' or nextlinecheck[1]==' ':
-                
+
                 i = i+1
                 nextline = lines[index4 + i]
-                
                 continue
             else:    
                 
@@ -4080,8 +4075,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                         
                         Condition.append('n' + node + ' ' + nextline3 + ' ' + str(Connection))    
 
-        elif ('if' in nextline and 'else' not in nextline and ':' not in nextline):
-            
+        elif ('if ' in nextline and 'else' not in nextline and ':' not in nextline and 'begin' not in nextline):
             if '//' in lines[index4+i]:
                 lines[index4+i] = lines[index4+i].split('//')[0]
             nextlinecheck = lines[index4 + i]
@@ -4094,25 +4088,24 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
             Nodeinfo1 = []
             
             Nodeinfo1, index3, node = nestedifelsecondition(lines, index4 + i, str(node), Nodeinfo1, case)
-            
-            
-            
+
+
+
             i = index3 - index4 - 1
-            
+
             for nodeflows in Nodeinfo1:
                 if isinstance(nodeflows ,str):
                     Condition.append(nodeflows)
                     
             nextline = lines[index4 + i]
 
-        elif ':' in nextline and ('<='  in nextline or '=' in nextline or 'if' in nextline or 'begin' in nextline):
-            
+        elif ':' in nextline and ('<=' in nextline or '=' in nextline or 'if' in nextline or 'begin' in nextline):
             if '//' in nextline:
                 nextline = nextline.split('//')[0]
             if Condition != []:
                 Nodeinfo.append(Condition)
-                
-            
+
+
             if nextline.count(':') > 1:
                 end = nextline.rfind(":")
                 assignment1 = nextline[:end]
@@ -4147,10 +4140,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                             node = node + str(values) + ','
                 
 
-                Nodeinfo.append('n' + str(node) +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection))
-                
-                
-                
+                Nodeinfo.append('n' + str(node) +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection)+'; ')
             else:
                 assignment = nextline.split(':')
             if '<=' in nextline or '=' in nextline:
@@ -4170,12 +4160,8 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                         nextline3 = nextline3.replace(' <=  <= ', ' == ')
                     
                     Condition.append('n' + node + ' ' + nextline3 + ' ' + str(Connection))
-                                  
-                
-                
 
         elif ':' in nextline:
-            
             if '//' in nextline:
                 nextline = nextline.split('//')[0]
             
@@ -4211,7 +4197,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                             node = node + str(values) + ','
                 
 
-                Nodeinfo.append('n' + str(node) +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection))
+                Nodeinfo.append('n' + str(node) +' ' + variable + ' == ' + assignment1 + ' ' + str(Connection)+'; ')
                 
                 
                 
@@ -4222,21 +4208,18 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
             assignment = nextline.split()
             nextline3 = ' '.join(assignment)
             nextnode = node.split(',')
-                
+
             Connection = Connection + 1
             if '<=' in nextline3:
                 
                 Condition.append('n' + node + ' ' + nextline3.replace('<=',' <= ').replace('`','').replace(';','').replace('`','') + ' ' + str(Connection))
             elif '=' in nextline3:
-                
                 nextline3 = nextline3.replace('=',' <= ').replace('`','').replace(';','').replace('`','')
                 if ' <=  <= ' in nextline3:
                     nextline3 = nextline3.replace(' <=  <= ', ' == ')
                 
                 Condition.append('n' + node + ' ' + nextline3 + ' ' + str(Connection))
-                       
-            
-        
+
         elif checkb == 1:
             nextline3 = nextline.replace(' ','').replace('\n','').replace('\t','')
             Condition2 = Condition2 + ' ' + nextline3 
@@ -4245,7 +4228,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                 Condition2 = Condition2 + ' ' + str(Connection)
                 
                 Condition.append(Condition2)
-        
+
         for val in nextlinevalue:
             if val == ' ':
                 indent1 = indent1 + 1
@@ -4301,6 +4284,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                     assignment1 = assignment[1].split()
                     assignment1 = ' '.join(assignment1)
                     nextline3 = assignment1.replace(';','').replace('`','')
+
                     if ("'0" in nextline3 or "'1" in nextline3) and ':' not in nextline3:
                         nextline3 = nextline3.replace("'",'')
                         
@@ -4344,7 +4328,6 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
                         break
         i = i + 1
         nextline = lines[index4 + i]
-    
         if default == 0 or (default == 1 and read == 1):
             
             for allval in Condition:
@@ -4356,8 +4339,7 @@ def nestedcasestatement(lines, index4, node, Nodeinfo, notnested):
         
         node = node.split(',')[0]
         node = int(node)
-        return Nodeinfo, index4+i, node    
-    
+        return Nodeinfo, index4+i, node
     return Nodeinfo, index4+i, node
 
 def RealiCFG(flpath,file1):
@@ -4379,7 +4361,7 @@ def RealiCFG(flpath,file1):
             
             if '.v' in block or '.sv' in block:
                 Connection = 0
-                with open(flpath + block.replace('\n','')) as fl1: 
+                with open(flpath + block.replace('\n','')) as fl1:
                     lines = fl1.readlines()
                     fl1.close()
                     AlwaysValue = []
@@ -4394,18 +4376,14 @@ def RealiCFG(flpath,file1):
                         line = line.split('//')[0]
                     Nodeinfo = []
                     connection = 0
-                        
                     if index3>index4:
-                        continue
-                    
+                            continue
                     if 'module' in line and 'endmodule' not in line and 'module' == line.split()[0]:
                         check = 1
                         themodule = line.split()[1]
                         themodule1 = themodule.split('(')[0]
                         modulelist2.append(themodule1 + ' ')
                         continue
-
-                    
                     if 'endmodule' in line:
                         parameter = []
                         check = 0
@@ -4420,7 +4398,7 @@ def RealiCFG(flpath,file1):
                                 
                                 modulelist2.append(items)
                         continue
-                    
+
                     if check == 0:
                         continue
                     
@@ -4480,19 +4458,19 @@ def RealiCFG(flpath,file1):
                             node, Nodeinfo = assignmentif(line, node, Nodeinfo, 0, '')
                     
                     elif (('assign ' in line or '=' in line) or '<=' in line) and '?' not in line and 'parameter' not in line and 'param ' not in line:
-                        
-                        
-                        
                         nex=0
                         if ';' not in line:
                             if '//' in line:
                                 line1 = line.split('//')
                                 line = line1[0]
                             nex = 1
-                            nexline = lines[index4+i+nex]
+                            try:
+                                nexline = lines[index4+i+nex]
+                            except:
+                                break
                             
                             while ';' not in nexline:
-                                
+                                # breakpoint()
                                 
                                 if '//' in nexline:
                                     line1 = nexline.split('//')
@@ -4502,7 +4480,8 @@ def RealiCFG(flpath,file1):
                                 line = line + nexline.replace('\n','')
                             
                                 nex = nex + 1
-                                nexline = lines[index4+i+nex]
+                                try: nexline = lines[index4 + i + nex]
+                                except: break
                                 
                                 if '//' in line:
                                     nexline = nexline.split('//')[0]
@@ -4531,7 +4510,7 @@ def RealiCFG(flpath,file1):
                             connection = connection + 1
                             node = node + 1
                             
-                            Nodeinfo.append('n' + str(node)+',0'+ ' ' + valueline + ' ' + str(connection))
+                            Nodeinfo.append('n' + str(node)+',0'+ ' ' + valueline + ' ' + str(connection)+'; ')
                     
                     
                     elif 'if ' in line and ('begin' in line or 'begin' in lines[index4+1]) and 'else' not in line:
@@ -4714,13 +4693,9 @@ def RealiCFG(flpath,file1):
                         
                         node = node+1
                         Nodeinfo, index3, node = nestedcasestatement(lines, index4, str(node), Nodeinfo, 1)
-                        
-                    
                     if Nodeinfo!=[]:
-                        
                         for nodeval in Nodeinfo:    
                             Nodeinfo1.append(nodeval)
-                       
     return Nodeinfo1, modulelist2
 
 def nodelist(node, nodeavail):
@@ -4738,7 +4713,7 @@ def nodelist(node, nodeavail):
 predecessors3 = []
 nodetoreach = []
 
-flpath1 = 'RTL/All_RTL/'
+flpath1 = '../Module-Track/RTL/All_RTL/'
 with open(flpath1 + "RTLFiles.txt") as fl:
         
         moduleline = fl.readlines()
@@ -4749,26 +4724,38 @@ for index, i in enumerate(moduleline):
 
 Always = []
 Allmodules = []
+AllCFGS= {}
+
+r = open("results.txt", "w")
 
 for i in range(modulenumber):
     file2 = "RTLFiles_" + str(i) + ".txt"
-    
+    # breakpoint()
     Nodeflowx1, Nodeflowx = RealiCFG(flpath1, file2)
-    print(Nodeflowx)
-    
+    # print(Nodeflowx)
+    r.writelines(Nodeflowx)
+    r.write('\n')
+    AllCFGS[file2] = Nodeflowx
+r.writelines(AllCFGS)
+
 inputkeys = []
 inputvals = []
+# breakpoint()
 firstnode = input("Choose which node to reach: " )
 conditioncheck = input("Variable to check: ")
-with open('C://rtlContest/RTL-CFG/input_node.txt', 'w') as f:
-    for i in Nodeflowx:
-        if conditioncheck.split()[0] in i and firstnode in i:
-            i.split()
-            f.write("%s %s\n" % (i.split()[1], i.split()[3]))
+try:
+    with open('C://rtlContest/RTL-CFG/input_node.txt', 'w') as f:
+        for i in Nodeflowx:
+            if conditioncheck.split()[0] in i and firstnode in i:
+                i.split()
+                f.write("%s %s\n" % (i.split()[1], i.split()[3]))
+except:
+    print("error")
 
 path, inputvals, inputkeys = EdgeRealignment(firstnode, Nodeflowx, 1, [])
-
 print(path)
+breakpoint()
+
 with open('C://rtlContest/RTL-CFG/input_value.txt', 'w') as f:
     for i,value in enumerate(inputkeys):
         for j,val in enumerate(inputvals):
